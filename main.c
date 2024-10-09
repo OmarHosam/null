@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef enum {
     EXIT,
@@ -13,12 +14,27 @@ typedef struct {
     char* value;
 } Token;
 
-int main(void) {
+void print_usage() {
+    printf("Usage: null <filename.nl>\n");
+}
+
+int main(int argc, char** argv) {
+    if (!argv[1]) {
+        printf("Wrong usage!\n");
+        print_usage();
+        exit(1);
+    }
+
     FILE* p_file;
     char current;
     Token* tokens;
 
-    p_file = fopen("test.nl", "r");
+    p_file = fopen(argv[1], "r");
+    if (!p_file) {
+        printf("This file is not found!\n");
+        print_usage();
+        exit(1);
+    }
 
     current = fgetc(p_file);
     while (current != EOF) {
