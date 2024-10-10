@@ -1,1 +1,1 @@
-exit(21);asdf;penis(12)
+exit(0);
