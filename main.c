@@ -19,45 +19,40 @@ typedef struct {
 void print_usage() { printf("Usage: null <filename.nl>\n"); }
 
 Token check_string(char current, FILE *p_file) {
-  char* buffer = malloc(sizeof(char) * 16);
+  char buffer[16];
   int i = 0;
-  Token l_token;
+  Token token = {0};
 
   while (current != EOF && isalpha(current)) {
-    buffer[i] = current;
+    buffer[i++] = current;
     current = fgetc(p_file);
-    i++;
   }
+  buffer[i] = '\0';
 
   if (strcmp(buffer, "exit") == 0) {
-    l_token.type = KEYWORD;
-    l_token.value = "exit";
+    token.type = KEYWORD;
+    token.value = "exit";
   }
-
-  ungetc(current, p_file); // One step back.
-
-  return l_token;
+  ungetc(current, p_file); // Move back one step
+  return token;
 }
 
 Token check_int_lit(char current, FILE *p_file) {
-  char *value = malloc(sizeof(char) * 8);
+  char buffer[8];
   int i = 0;
-  Token l_token;
-
-  l_token.type = INT_LITERAL;
+  Token token = {INT_LITERAL, NULL};
 
   while (current != EOF && isdigit(current)) {
-    if (!isdigit(current)) break;
-    value[i] = current;
+    buffer[i++] = current;
     current = fgetc(p_file);
-    i++;
   }
+  buffer[i] = '\0';
 
-  l_token.value = value;
-
-  ungetc(current, p_file); // One step back.
-
-  return l_token;
+  // Because the buffer is getting freed after the function exits,
+  // it's better to duplicate the string. That way, we can avoid undefined behavior.
+  token.value = strdup(buffer);
+  ungetc(current, p_file); // Move back one step
+  return token;
 }
 
 Token tokenize_brackets(char current) {
@@ -114,7 +109,9 @@ int main(int argc, char **argv) {
 
   FILE *p_file;
   char current;
-  Token *tokens = malloc(sizeof(Token) * 8);
+
+  int capacity = 8;
+  Token *tokens = malloc(sizeof(Token) * capacity);
 
   p_file = fopen(argv[1], "r");
   if (!p_file) {
@@ -127,37 +124,35 @@ int main(int argc, char **argv) {
   current = fgetc(p_file);
 
   while (current != EOF) {
-    // printf("%c\n", current);
     Token curr_token;
 
+    // Thanks ChatGPT for the refactoring!
     if (isalpha(current)) {
       curr_token = check_string(current, p_file);
-      tokens[token_index] = curr_token;
-      token_index++;
-    }
-
-    if (isdigit(current)) {
+    } else if (isdigit(current)) {
       curr_token = check_int_lit(current, p_file);
-      tokens[token_index] = curr_token;
-      token_index++;
-    }
-
-    if (current == ')' || current == '(') {
+    } else if (current == ')' || current == '(') {
       curr_token = tokenize_brackets(current);
-      tokens[token_index] = curr_token;
-      token_index++;
-    }
-
-    if (current == ';') {
+    } else if (current == ';') {
       curr_token = tokenize_semicolon(current);
-      tokens[token_index] = curr_token;
-      token_index++;
+    } else {
+      current = fgetc(p_file);
+      continue;
     }
 
+    if (token_index >= capacity) {
+      capacity *= 2;
+      tokens = realloc(tokens, sizeof(Token) * capacity);
+      if (tokens == NULL) {
+        printf("Lexer Error: failed to reallocate more memory for the tokens.\n");
+      }
+    }
+
+    tokens[token_index++] = curr_token;
     current = fgetc(p_file);
   }
 
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < token_index; i++) {
     print_token(tokens[i]);
   }
 
