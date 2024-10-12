@@ -26,6 +26,12 @@ void print_token(Token token) {
   }
 }
 
+void print_tokens(Token* tokens, int* length) {
+  for (int i = 0; i < *length; i++) {
+    print_token(tokens[i]);
+  }
+};
+
 int main(int argc, char **argv) {
   if (!argv[1]) {
     printf("Wrong usage!\n");
@@ -45,9 +51,7 @@ int main(int argc, char **argv) {
 
   Token* tokens = lexer(p_file, &length);
 
-  for (int i = 0; i < length; i++) {
-    print_token(tokens[i]);
-  }
+  print_tokens(tokens, &length);
 
   // Cleanup.
   fclose(p_file);
