@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "tokens.h"
+#include "common.h"
 #include "lexer.h"
+#include "parser.h"
 
 void print_usage(char* loc) { printf("Usage: %s <filename.nl>\n", loc); }
 
@@ -50,6 +51,7 @@ int main(int argc, char **argv) {
   }
 
   Token* tokens = lexer(p_file, &length);
+  tokens = parse(tokens);
 
   print_tokens(tokens, &length);
 
