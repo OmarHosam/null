@@ -5,8 +5,8 @@
 //
 // struct AST {};
 
-Token* parse(Token* tokens, int *length) {
-  // TODO: Implement the parser.
-  printf("%d\n", *length);
-  return tokens;
+Token* parse(Token* tokens, int* length) {
+    // TODO: Implement the parser.
+    printf("%d\n", *length);
+    return tokens;
 }
