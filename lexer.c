@@ -1,5 +1,9 @@
 #include "lexer.h"
+#include "common.h"
 #include <stdlib.h>
+
+// For now.
+char* types[] = {"int"};
 
 Token check_string(char current, FILE* p_file) {
     char buffer[16];
@@ -12,10 +16,19 @@ Token check_string(char current, FILE* p_file) {
     }
     buffer[i] = '\0';
 
-    if (strcmp(buffer, "exit") == 0) {
-        token.type = KEYWORD;
-        token.value = "exit";
+    for (int i = 0; i < sizeof(types) / sizeof(types[0]); i++) {
+        if (strcmp(types[i], buffer) == 0) {
+            token.type = VAR;
+            token.value = types[i];
+
+            ungetc(current, p_file);
+            return token;
+        }
     }
+
+    token.type = KEYWORD;
+    token.value = strdup(buffer);
+
     ungetc(current, p_file); // Move back one step.
     return token;
 }
@@ -63,6 +76,15 @@ Token tokenize_semicolon(char current) {
     return l_token;
 }
 
+Token tokenize_equal(char current) {
+    Token l_token;
+
+    l_token.type = EQUAL;
+    l_token.value = "=";
+
+    return l_token;
+}
+
 // `int length` will return the length for the tokens.
 Token* lexer(FILE* p_file, int* length) {
     char current;
@@ -84,6 +106,8 @@ Token* lexer(FILE* p_file, int* length) {
             curr_token = tokenize_brackets(current);
         } else if (current == ';') {
             curr_token = tokenize_semicolon(current);
+        } else if (current == '=') {
+            curr_token = tokenize_equal(current);
         } else {
             current = fgetc(p_file);
             continue;

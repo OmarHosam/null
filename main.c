@@ -10,7 +10,7 @@ void print_token(Token token) {
     printf("Token value: '%s'\t", token.value);
     switch (token.type) {
     case (INT_LITERAL):
-        printf("Token type: INT\n");
+        printf("Token type: INT_LITERAL\n");
         break;
     case (KEYWORD):
         printf("Token type: KEYWORD\n");
@@ -24,6 +24,12 @@ void print_token(Token token) {
     case (CLOSE_BRACKET):
         printf("Token type: CLOSE_BRACKET\n");
         break;
+    case (EQUAL):
+        printf("Token type: EQUAL\n");
+        break;
+    case (VAR):
+        printf("Token type: VAR\n");
+        break;
     }
 }
 
@@ -35,7 +41,7 @@ void print_tokens(Token* tokens, int* length) {
 
 void free_tokens(Token* tokens, int length) {
     for (int i = 0; i < length; i++) {
-        if (tokens[i].type == INT_LITERAL) {
+        if (tokens[i].type == INT_LITERAL || tokens[i].type == KEYWORD) {
             free(tokens[i].value);
         }
     }

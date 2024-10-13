@@ -5,7 +5,9 @@ typedef enum {
     INT_LITERAL,
     SEMICOLON,
     OPEN_BRACKET,
-    CLOSE_BRACKET
+    CLOSE_BRACKET,
+    EQUAL,
+    VAR
 } TokenType;
 
 typedef struct {
