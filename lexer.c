@@ -34,7 +34,6 @@ Token check_int_lit(char current, FILE *p_file) {
   // Because the buffer is getting freed after the function exits,
   // it's better to duplicate the string. That way, we can avoid undefined
   // behavior.
-  // TODO: fix memory leak.
   token.value = strdup(buffer);
   ungetc(current, p_file); // Move back one step.
   return token;

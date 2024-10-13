@@ -31,7 +31,17 @@ void print_tokens(Token* tokens, int* length) {
   for (int i = 0; i < *length; i++) {
     print_token(tokens[i]);
   }
-};
+}
+
+void free_tokens(Token* tokens, int length) {
+  for (int i = 0; i < length; i++) {
+    if (tokens[i].type == INT_LITERAL) {
+      free(tokens[i].value);
+    }
+  }
+
+  free(tokens);
+}
 
 int main(int argc, char **argv) {
   if (!argv[1]) {
@@ -51,13 +61,13 @@ int main(int argc, char **argv) {
   }
 
   Token* tokens = lexer(p_file, &length);
-  tokens = parse(tokens);
+  tokens = parse(tokens, &length);
 
   print_tokens(tokens, &length);
 
   // Cleanup.
   fclose(p_file);
-  free(tokens);
+  free_tokens(tokens, length);
 
   return 0;
 }
