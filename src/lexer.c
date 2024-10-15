@@ -2,9 +2,6 @@
 #include "common.h"
 #include <stdlib.h>
 
-// For now.
-char* types[] = {"int"};
-
 Token check_string(char current, FILE* p_file) {
     char buffer[16];
     int i = 0;
@@ -15,16 +12,6 @@ Token check_string(char current, FILE* p_file) {
         current = fgetc(p_file);
     }
     buffer[i] = '\0';
-
-    for (int i = 0; i < sizeof(types) / sizeof(types[0]); i++) {
-        if (strcmp(types[i], buffer) == 0) {
-            token.type = VAR;
-            token.value = types[i];
-
-            ungetc(current, p_file);
-            return token;
-        }
-    }
 
     token.type = KEYWORD;
     token.value = strdup(buffer);

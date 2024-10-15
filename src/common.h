@@ -1,13 +1,13 @@
 #pragma once
 
 typedef enum {
+    ROOT,
     KEYWORD,
     INT_LITERAL,
     SEMICOLON,
     OPEN_BRACKET,
     CLOSE_BRACKET,
-    EQUAL,
-    VAR
+    EQUAL
 } TokenType;
 
 typedef struct {

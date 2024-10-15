@@ -27,9 +27,6 @@ void print_token(Token token) {
     case (EQUAL):
         printf("Token type: EQUAL\n");
         break;
-    case (VAR):
-        printf("Token type: VAR\n");
-        break;
     }
 }
 
