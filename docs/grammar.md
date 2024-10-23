@@ -1,4 +1,3 @@
 <Prog> ::= <Statement>*
-<Statement> ::= "exit" "(" <Expr> ")" ";"
-<Expr> ::= <Num>
-<Num> ::= <int_lit>
+<Statement> ::= exit(<Expr>);
+<Expr> ::= <int_lit>
