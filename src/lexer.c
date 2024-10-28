@@ -119,3 +119,43 @@ Token* lexer(FILE* p_file, int* length) {
 
     return tokens;
 }
+
+void print_token(Token token) {
+    printf("Token value: '%s'\t", token.value);
+    switch (token.type) {
+    case (INT_LITERAL):
+        printf("Token type: INT_LITERAL\n");
+        break;
+    case (KEYWORD):
+        printf("Token type: KEYWORD\n");
+        break;
+    case (SEMICOLON):
+        printf("Token type: SEMICOLON\n");
+        break;
+    case (OPEN_BRACKET):
+        printf("Token type: OPEN_BRACKET\n");
+        break;
+    case (CLOSE_BRACKET):
+        printf("Token type: CLOSE_BRACKET\n");
+        break;
+    case (EQUAL):
+        printf("Token type: EQUAL\n");
+        break;
+    }
+}
+
+void print_tokens(Token* tokens, int* length) {
+    for (int i = 0; i < *length; i++) {
+        print_token(tokens[i]);
+    }
+}
+
+void free_tokens(Token* tokens, int length) {
+    for (int i = 0; i < length; i++) {
+        if (tokens[i].type == INT_LITERAL || tokens[i].type == KEYWORD) {
+            free(tokens[i].value);
+        }
+    }
+
+    free(tokens);
+}
