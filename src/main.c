@@ -64,9 +64,9 @@ int main(int argc, char** argv) {
     }
 
     Token* tokens = lexer(p_file, &length);
-    tokens = parse(tokens, &length);
-
     print_tokens(tokens, &length);
+
+    tokens = parse(tokens, &length);
 
     // Cleanup.
     fclose(p_file);

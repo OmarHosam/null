@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 Token check_string(char current, FILE* p_file) {
+    // TODO: fix buffer overflow.
     char buffer[16];
     int i = 0;
     Token token = {0};
@@ -21,6 +22,7 @@ Token check_string(char current, FILE* p_file) {
 }
 
 Token check_int_lit(char current, FILE* p_file) {
+    // TODO: fix buffer overflow.
     char buffer[8];
     int i = 0;
     Token token = {INT_LITERAL, NULL};

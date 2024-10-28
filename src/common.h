@@ -1,7 +1,6 @@
 #pragma once
 
 typedef enum {
-    ROOT,
     KEYWORD,
     INT_LITERAL,
     SEMICOLON,
