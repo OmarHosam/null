@@ -2,6 +2,7 @@
 #include "common.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct {
     Token* tokens;
@@ -45,6 +46,41 @@ NodeExpr* parse_expr(Parser* parser) {
     return NULL;
 }
 
+int parse_stmt_exit(Parser* parser, NodeStmt* stmt) {
+    if (peek(parser, 1).type != OPEN_BRACKET)
+        return 0;
+
+    consume(parser); // KEYWORD token. (exit)
+    consume(parser); // OPEN_BRACKET token.
+
+    NodeExpr* expr = parse_expr(parser);
+    if (!expr) {
+        printf("Parser: Invalid expression in the exit statement.\n");
+        free(stmt);
+        exit(1);
+    }
+
+    stmt->type = NODE_STMT_EXIT;
+    stmt->exit_stmt.expr = *expr;
+    free(expr);
+
+    if (peek(parser, 0).type != CLOSE_BRACKET) {
+        printf("Parser: Expected ')'\n");
+        free(stmt);
+        exit(1);
+    }
+    consume(parser);
+
+    if (peek(parser, 0).type != SEMICOLON) {
+        printf("Parser: Expected ';'\n");
+        free(stmt);
+        exit(1);
+    }
+    consume(parser);
+
+    return 1;
+}
+
 NodeStmt* parse_stmt(Parser* parser) {
     Token token = peek(parser, 0);
     if (!token.value)
@@ -56,36 +92,14 @@ NodeStmt* parse_stmt(Parser* parser) {
         exit(1); // Possible memory leak??
     }
 
-    if (token.type == KEYWORD && peek(parser, 1).type == OPEN_BRACKET) {
-        consume(parser); // KEYWORD token. (exit)
-        consume(parser); // OPEN_BRACKET token.
-
-        NodeExpr* expr = parse_expr(parser);
-        if (!expr) {
-            printf("Parser: Invalid expression in the exit statement.\n");
-            free(stmt);
-            exit(1);
+    // state == 1 if successfull.
+    // state == 0 if NOT successfull.
+    if (token.type == KEYWORD) {
+        if (strcmp(token.value, "exit") == 0) {
+            int state = parse_stmt_exit(parser, stmt);
+            if (state)
+                return stmt;
         }
-
-        stmt->type = NODE_STMT_EXIT;
-        stmt->exit_stmt.expr = *expr;
-        free(expr);
-
-        if (peek(parser, 0).type != CLOSE_BRACKET) {
-            printf("Parser: Expected ')'\n");
-            free(stmt);
-            exit(1);
-        }
-        consume(parser);
-
-        if (peek(parser, 0).type != SEMICOLON) {
-            printf("Parser: Expected ';'\n");
-            free(stmt);
-            exit(1);
-        }
-        consume(parser);
-
-        return stmt;
     }
 
     free(stmt);
@@ -122,9 +136,11 @@ NodeProg* parse_prog(Parser* parser) {
             NodeStmt* temp = realloc(prog->stmts, sizeof(NodeStmt) * prog->capacity);
             if (!temp) {
                 printf("Parser: Failed to reallocate memory for the statements array in the program node.\n");
+
                 free(prog->stmts);
                 free(prog);
                 free(stmt);
+
                 exit(1);
             }
             prog->stmts = temp;
