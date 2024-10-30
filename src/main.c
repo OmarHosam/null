@@ -26,11 +26,13 @@ int main(int argc, char** argv) {
     Token* tokens = lexer(p_file, &length);
     print_tokens(tokens, &length);
 
-    tokens = parse(tokens, &length);
+    NodeProg* prog = parse(tokens, &length);
 
     // Cleanup.
     fclose(p_file);
     free_tokens(tokens, length);
+    free(prog->stmts);
+    free(prog);
 
     return 0;
 }

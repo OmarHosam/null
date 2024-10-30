@@ -31,6 +31,7 @@ typedef struct {
 typedef struct {
     NodeStmt* stmts;
     int length;
+    int capacity;
 } NodeProg;
 
-Token* parse(Token* tokens, int* length);
+NodeProg* parse(Token* tokens, int* length);
