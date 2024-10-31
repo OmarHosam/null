@@ -92,8 +92,8 @@ NodeStmt* parse_stmt(Parser* parser) {
         exit(1); // Possible memory leak??
     }
 
-    // state == 1 if successfull.
-    // state == 0 if NOT successfull.
+    // state == 1 if successful.
+    // state == 0 if NOT successful.
     if (token.type == KEYWORD) {
         if (strcmp(token.value, "exit") == 0) {
             int state = parse_stmt_exit(parser, stmt);
