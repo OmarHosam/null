@@ -27,6 +27,7 @@ int main(int argc, char** argv) {
     print_tokens(tokens, &length);
 
     NodeProg* prog = parse(tokens, &length);
+    print_program(prog);
 
     int gen = codegen(prog, "test.asm");
 

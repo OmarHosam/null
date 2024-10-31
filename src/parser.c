@@ -152,6 +152,42 @@ NodeProg* parse_prog(Parser* parser) {
     return prog;
 }
 
+void token_print(Token token) { printf("%s\n", token.value); }
+
+void print_expr(NodeExpr* expr) {
+    switch (expr->type) {
+    case NODE_EXPR_INT_LIT:
+        printf("Int Literal: ");
+        token_print(expr->value.int_lit);
+        break;
+    // Add more cases if there are additional expression types
+    default:
+        printf("Unknown Expr");
+        break;
+    }
+}
+
+void print_stmt(NodeStmt* stmt) {
+    switch (stmt->type) {
+    case NODE_STMT_EXIT:
+        printf("Exit Statement:\n  ");
+        print_expr(&stmt->exit_stmt.expr);
+        break;
+    default:
+        printf("Unknown Stmt");
+        break;
+    }
+}
+
+void print_program(NodeProg* program) {
+    printf("Program with %d statements:\n", program->length);
+    for (int i = 0; i < program->length; i++) {
+        printf("Statement %d: ", i + 1);
+        print_stmt(&program->stmts[i]);
+        printf("\n");
+    }
+}
+
 NodeProg* parse(Token* tokens, int* length) {
     Parser parser = {.index = 0, .length = *length, .tokens = tokens};
 

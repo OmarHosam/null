@@ -35,3 +35,4 @@ typedef struct {
 } NodeProg;
 
 NodeProg* parse(Token* tokens, int* length);
+void print_program(NodeProg* program);
