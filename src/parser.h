@@ -1,5 +1,6 @@
 #pragma once
 #include "lexer.h"
+#include "types.h"
 
 // https://keleshev.com/abstract-syntax-tree-an-example-in-c/ast.svg
 typedef enum {

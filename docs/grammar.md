@@ -1,5 +1,9 @@
 <Prog> ::= <Statement>*
 
-<Statement> ::= exit(<Expr>);
+<Statement> ::= <ExitStatement> | <VarStatement>;
+
+<ExitStatement> ::= exit(<Expr>);
+
+<VarDeclaration> ::= int <Identifier> = <Expr>;
 
 <Expr> ::= <int_lit>

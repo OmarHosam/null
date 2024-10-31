@@ -13,7 +13,28 @@ Token check_string(char current, FILE* p_file) {
     }
     buffer[i] = '\0';
 
-    token.type = KEYWORD;
+    // Not so efficient, but it get's the job done for now.
+    for (int i = 0; i < sizeof(keywords) / sizeof(keywords[0]); i++) {
+        if (strcmp(buffer, keywords[i]) == 0) {
+            token.type = KEYWORD;
+            token.value = strdup(buffer);
+
+            ungetc(current, p_file); // Move back one step.
+            return token;
+        }
+    }
+
+    for (int i = 0; i < sizeof(types) / sizeof(types[0]); i++) {
+        if (strcmp(buffer, types[i]) == 0) {
+            token.type = KEYWORD;
+            token.value = strdup(buffer);
+
+            ungetc(current, p_file); // Move back one step.
+            return token;
+        }
+    }
+
+    token.type = IDENTIFIER;
     token.value = strdup(buffer);
 
     ungetc(current, p_file); // Move back one step.
@@ -139,6 +160,9 @@ void print_token(Token token) {
         break;
     case (EQUAL):
         printf("Token type: EQUAL\n");
+        break;
+    case (IDENTIFIER):
+        printf("Token type: IDENTIFIER\n");
         break;
     }
 }

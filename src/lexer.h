@@ -3,13 +3,17 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "keywords.h"
+#include "types.h"
+
 typedef enum {
     KEYWORD,
     INT_LITERAL,
     SEMICOLON,
     OPEN_BRACKET,
     CLOSE_BRACKET,
-    EQUAL
+    EQUAL,
+    IDENTIFIER
 } TokenType;
 
 typedef struct {

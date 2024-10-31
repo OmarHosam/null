@@ -1,5 +1,43 @@
 #include "codegen.h"
+#include "parser.h"
 #include <stdlib.h>
+
+char* gen_expr(NodeExpr expr) {
+    switch (expr.type) {
+    case NODE_EXPR_INT_LIT:
+        return expr.value.int_lit.value;
+    default:
+        break;
+    }
+
+    return NULL;
+}
+
+void gen_stmt(NodeStmt stmt, FILE* output) {
+    char* expr;
+
+    switch (stmt.type) {
+    case NODE_STMT_EXIT:
+        expr = gen_expr(stmt.exit_stmt.expr);
+        if (!expr) {
+            printf("Codegen: Failed to generate an expression.\n");
+            exit(1);
+        }
+
+        fprintf(output, "mov rax, 60\n\t");
+        fprintf(output, "mov rdi, %s\n\t", expr);
+        fprintf(output, "syscall\n\t");
+        break;
+    default:
+        break;
+    }
+}
+
+void gen_prog(NodeProg* prog, FILE* output) {
+    for (int i = 0; i < prog->length; i++) {
+        gen_stmt(prog->stmts[i], output);
+    }
+}
 
 int codegen(NodeProg* prog, char* filename) {
     FILE* output = fopen(filename, "w");
@@ -10,8 +48,11 @@ int codegen(NodeProg* prog, char* filename) {
 
     fprintf(output, "global _start\n\n");
     fprintf(output, "_start:\n\t");
+    gen_prog(prog, output);
+
+    // Default behavior. (probably)
     fprintf(output, "mov rax, 60\n\t");
-    fprintf(output, "mov rdi, %s\n\t", prog->stmts[0].exit_stmt.expr.value.int_lit.value);
+    fprintf(output, "mov rdi, 0\n\t");
     fprintf(output, "syscall\n");
 
     fclose(output);

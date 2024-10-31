@@ -80,6 +80,8 @@ int parse_stmt_exit(Parser* parser, NodeStmt* stmt) {
     return 1;
 }
 
+int parse_stmt_variable(Parser* parser, NodeStmt* stmt) { return 1; }
+
 NodeStmt* parse_stmt(Parser* parser) {
     Token token = peek(parser, 0);
     if (!token.value)
@@ -94,6 +96,11 @@ NodeStmt* parse_stmt(Parser* parser) {
     // state == 1 if successful.
     // state == 0 if NOT successful.
     if (token.type == KEYWORD) {
+        for (int i = 0; i < sizeof(types) / sizeof(types[0]); i++) {
+            if (strcmp(token.value, types[i]) == 0) {
+                break;
+            }
+        }
         if (strcmp(token.value, "exit") == 0) {
             int state = parse_stmt_exit(parser, stmt);
             if (state)
