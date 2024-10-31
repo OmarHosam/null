@@ -1,4 +1,4 @@
-#include "common.h"
+#include "codegen.h"
 #include "lexer.h"
 #include "parser.h"
 #include <stdio.h>
@@ -27,6 +27,13 @@ int main(int argc, char** argv) {
     print_tokens(tokens, &length);
 
     NodeProg* prog = parse(tokens, &length);
+
+    int gen = codegen(prog, "test.asm");
+
+    if (gen) {
+        system("nasm -f elf64 test.asm");
+        system("ld test.o -o test");
+    }
 
     // Cleanup.
     fclose(p_file);

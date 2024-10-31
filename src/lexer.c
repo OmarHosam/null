@@ -1,5 +1,4 @@
 #include "lexer.h"
-#include "common.h"
 #include <stdlib.h>
 
 Token check_string(char current, FILE* p_file) {
