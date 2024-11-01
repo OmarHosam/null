@@ -1,4 +1,5 @@
 #include "parser.h"
+#include "lexer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -80,7 +81,45 @@ int parse_stmt_exit(Parser* parser, NodeStmt* stmt) {
     return 1;
 }
 
-int parse_stmt_variable(Parser* parser, NodeStmt* stmt) { return 1; }
+int parse_stmt_variable(Parser* parser, NodeStmt* stmt) {
+    if (peek(parser, 1).type != IDENTIFIER) {
+        printf("Parser: Expected an identifier after the type.\n");
+        free(stmt);
+        exit(1);
+    }
+
+    stmt->type = NODE_STMT_VAR;
+    stmt->var_stmt.type = consume(parser).value;
+    stmt->var_stmt.identifier = consume(parser).value;
+
+    if (peek(parser, 0).type != EQUAL) {
+        printf("Parser: Expected '='\n");
+        free(stmt);
+        exit(1);
+    }
+    consume(parser);
+
+    NodeExpr* expr = parse_expr(parser);
+    if (strcmp(stmt->var_stmt.type, "int") == 0) {
+        if (expr && expr->type == NODE_EXPR_INT_LIT) {
+            stmt->var_stmt.value = *expr;
+        } else {
+            printf("Parser: Unexpected type.\n");
+            free(stmt);
+            exit(1);
+        }
+    }
+
+    if (peek(parser, 0).type != SEMICOLON) {
+        printf("%s\n", peek(parser, 0).value);
+        printf("Parser: Expected ';'\n");
+        free(stmt);
+        exit(1);
+    }
+    consume(parser);
+
+    return 1;
+}
 
 NodeStmt* parse_stmt(Parser* parser) {
     Token token = peek(parser, 0);
@@ -98,12 +137,12 @@ NodeStmt* parse_stmt(Parser* parser) {
     if (token.type == KEYWORD) {
         for (int i = 0; i < sizeof(types) / sizeof(types[0]); i++) {
             if (strcmp(token.value, types[i]) == 0) {
-                break;
+                if (parse_stmt_variable(parser, stmt))
+                    return stmt;
             }
         }
         if (strcmp(token.value, "exit") == 0) {
-            int state = parse_stmt_exit(parser, stmt);
-            if (state)
+            if (parse_stmt_exit(parser, stmt))
                 return stmt;
         }
     }
@@ -167,7 +206,6 @@ void print_expr(NodeExpr* expr) {
         printf("Int Literal: ");
         token_print(expr->value.int_lit);
         break;
-    // Add more cases if there are additional expression types
     default:
         printf("Unknown Expr");
         break;
@@ -180,7 +218,14 @@ void print_stmt(NodeStmt* stmt) {
         printf("Exit Statement:\n  ");
         print_expr(&stmt->exit_stmt.expr);
         break;
+    case NODE_STMT_VAR:
+        printf("Variable Statement:\n ");
+        printf("Identifier: %s\n ", stmt->var_stmt.identifier);
+        printf("Type: %s\n ", stmt->var_stmt.type);
+        print_expr(&stmt->var_stmt.value);
+        break;
     default:
+        printf("%d\n", stmt->type);
         printf("Unknown Stmt");
         break;
     }

@@ -9,6 +9,7 @@ typedef enum {
 
 typedef enum {
     NODE_STMT_EXIT,
+    NODE_STMT_VAR,
 } NodeStmtType;
 
 typedef struct {
@@ -26,6 +27,11 @@ typedef struct {
         struct {
             NodeExpr expr;
         } exit_stmt;
+        struct {
+            char* type;
+            char* identifier;
+            NodeExpr value;
+        } var_stmt;
     };
 } NodeStmt;
 

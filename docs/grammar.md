@@ -6,4 +6,4 @@
 
 <VarDeclaration> ::= int <Identifier> = <Expr>;
 
-<Expr> ::= <int_lit>
+<Expr> ::= <Int_literal> | <Identifier>

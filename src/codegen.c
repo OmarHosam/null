@@ -24,9 +24,9 @@ void gen_stmt(NodeStmt stmt, FILE* output) {
             exit(1);
         }
 
-        fprintf(output, "mov rax, 60\n\t");
-        fprintf(output, "mov rdi, %s\n\t", expr);
-        fprintf(output, "syscall\n\t");
+        fprintf(output, "    mov rax, 60\n");
+        fprintf(output, "    mov rdi, %s\n", expr);
+        fprintf(output, "    syscall\n");
         break;
     default:
         break;
@@ -47,13 +47,13 @@ int codegen(NodeProg* prog, char* filename) {
     }
 
     fprintf(output, "global _start\n\n");
-    fprintf(output, "_start:\n\t");
+    fprintf(output, "_start:\n");
     gen_prog(prog, output);
 
     // Default behavior. (probably)
-    fprintf(output, "mov rax, 60\n\t");
-    fprintf(output, "mov rdi, 0\n\t");
-    fprintf(output, "syscall\n");
+    fprintf(output, "    mov rax, 60\n");
+    fprintf(output, "    mov rdi, 0\n");
+    fprintf(output, "    syscall\n");
 
     fclose(output);
 
