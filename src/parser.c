@@ -42,6 +42,12 @@ NodeExpr* parse_expr(Parser* parser) {
         return expr;
     }
 
+    if (token.type == IDENTIFIER) {
+        expr->type = NODE_EXPR_IDENTIFIER;
+        expr->ident.identifier = consume(parser);
+        return expr;
+    }
+
     free(expr);
     return NULL;
 }
@@ -111,7 +117,6 @@ int parse_stmt_variable(Parser* parser, NodeStmt* stmt) {
     }
 
     if (peek(parser, 0).type != SEMICOLON) {
-        printf("%s\n", peek(parser, 0).value);
         printf("Parser: Expected ';'\n");
         free(stmt);
         exit(1);
@@ -129,11 +134,9 @@ NodeStmt* parse_stmt(Parser* parser) {
     NodeStmt* stmt = malloc(sizeof(NodeStmt));
     if (!stmt) {
         printf("Parser: Failed to allocate memory for a statement node.\n");
-        exit(1); // Possible memory leak??
+        exit(1);
     }
 
-    // state == 1 if successful.
-    // state == 0 if NOT successful.
     if (token.type == KEYWORD) {
         for (int i = 0; i < sizeof(types) / sizeof(types[0]); i++) {
             if (strcmp(token.value, types[i]) == 0) {
@@ -205,6 +208,10 @@ void print_expr(NodeExpr* expr) {
     case NODE_EXPR_INT_LIT:
         printf("Int Literal: ");
         token_print(expr->value.int_lit);
+        break;
+    case NODE_EXPR_IDENTIFIER:
+        printf("Variable: ");
+        token_print(expr->ident.identifier);
         break;
     default:
         printf("Unknown Expr");

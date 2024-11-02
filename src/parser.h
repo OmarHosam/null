@@ -5,6 +5,7 @@
 // https://keleshev.com/abstract-syntax-tree-an-example-in-c/ast.svg
 typedef enum {
     NODE_EXPR_INT_LIT,
+    NODE_EXPR_IDENTIFIER
 } NodeExprType;
 
 typedef enum {
@@ -18,6 +19,9 @@ typedef struct {
         struct {
             Token int_lit; // NODE_EXPR_INT_LIT
         } value;
+        struct {
+            Token identifier;
+        } ident;
     };
 } NodeExpr;
 

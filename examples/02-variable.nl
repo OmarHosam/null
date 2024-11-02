@@ -1,2 +1,3 @@
-int test = 1;
-exit(0);
+int x = 4;
+int y = 9;
+exit(x);
