@@ -2,9 +2,9 @@
 #include "parser.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define INT_SIZE 4
-
 typedef struct {
     char* name;
     char* value;
@@ -21,9 +21,6 @@ typedef struct {
 Generator gen;
 
 char* gen_expr(NodeExpr expr) {
-    // To stop the compiler from screaming.
-    char* res;
-
     switch (expr.type) {
     case NODE_EXPR_INT_LIT:
         return expr.value.int_lit.value;
@@ -33,8 +30,15 @@ char* gen_expr(NodeExpr expr) {
             // declaring multiple variables with the same name could cause
             // undefined behavior.
             if (strcmp(gen.variables[i].name, expr.ident.identifier.value) == 0) {
-                // TODO: fix memory leak.
-                asprintf(&res, "[rbp-%d]", gen.variables[i].stack_offset);
+                int offset = gen.variables[i].stack_offset;
+
+                char* res = malloc(20);
+                if (res == NULL) {
+                    fprintf(stderr, "Codegen: Memory allocation failed.\n");
+                    exit(1);
+                }
+                snprintf(res, 20, "[rbp-%d]", offset);
+
                 return res;
             }
         }
@@ -92,7 +96,6 @@ void gen_prog(NodeProg* prog, FILE* output) {
             Variable* temp = realloc(gen.variables, sizeof(Variable) * gen.variables_capacity);
             if (!temp) {
                 printf("Codegen: Failed to reallocate memory for the variables array.\n");
-                // For some reason freeing `gen.variables` causes a double free.
                 exit(1);
             }
             gen.variables = temp;
