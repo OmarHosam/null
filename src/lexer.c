@@ -47,7 +47,11 @@ Token check_int_lit(char current, FILE* p_file) {
     int i = 0;
     Token token = {INT_LITERAL, NULL};
 
-    while (current != EOF && isdigit(current)) {
+    while (current != EOF && (isdigit(current) || current == '_')) {
+        if (current == '_') {
+            current = fgetc(p_file);
+            continue;
+        }
         buffer[i++] = current;
         current = fgetc(p_file);
     }
