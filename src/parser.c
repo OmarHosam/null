@@ -112,6 +112,7 @@ int parse_stmt_variable(Parser* parser, NodeStmt* stmt) {
         } else {
             printf("Parser: Unexpected type.\n");
             free(stmt);
+            free(expr);
             exit(1);
         }
     }
@@ -119,9 +120,11 @@ int parse_stmt_variable(Parser* parser, NodeStmt* stmt) {
     if (peek(parser, 0).type != SEMICOLON) {
         printf("Parser: Expected ';'\n");
         free(stmt);
+        free(expr);
         exit(1);
     }
     consume(parser);
+    free(expr);
 
     return 1;
 }
@@ -174,6 +177,7 @@ NodeProg* parse_prog(Parser* parser) {
         NodeStmt* stmt = parse_stmt(parser);
         if (!stmt) {
             printf("Parser: Invalid statement.\n");
+            free(stmt);
             free(prog->stmts);
             free(prog);
             exit(1);
@@ -185,9 +189,9 @@ NodeProg* parse_prog(Parser* parser) {
             if (!temp) {
                 printf("Parser: Failed to reallocate memory for the statements array in the program node.\n");
 
+                free(stmt);
                 free(prog->stmts);
                 free(prog);
-                free(stmt);
 
                 exit(1);
             }
@@ -196,6 +200,7 @@ NodeProg* parse_prog(Parser* parser) {
 
         // Add the statement node to our array.
         prog->stmts[prog->length++] = *stmt;
+        free(stmt);
     }
 
     return prog;

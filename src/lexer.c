@@ -3,7 +3,7 @@
 
 Token check_string(char current, FILE* p_file) {
     // TODO: fix buffer overflow.
-    char buffer[16];
+    char buffer[64];
     int i = 0;
     Token token = {0};
 
@@ -43,7 +43,7 @@ Token check_string(char current, FILE* p_file) {
 
 Token check_int_lit(char current, FILE* p_file) {
     // TODO: fix buffer overflow.
-    char buffer[8];
+    char buffer[64];
     int i = 0;
     Token token = {INT_LITERAL, NULL};
 
@@ -175,10 +175,9 @@ void print_tokens(Token* tokens, int* length) {
 
 void free_tokens(Token* tokens, int length) {
     for (int i = 0; i < length; i++) {
-        if (tokens[i].type == INT_LITERAL || tokens[i].type == KEYWORD) {
+        if (tokens[i].type == INT_LITERAL || tokens[i].type == KEYWORD || tokens[i].type == IDENTIFIER) {
             free(tokens[i].value);
         }
     }
-
     free(tokens);
 }
