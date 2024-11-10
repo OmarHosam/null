@@ -65,7 +65,7 @@ Token check_int_lit(char current, FILE* p_file) {
     return token;
 }
 
-Token tokenize_brackets(char current) {
+Token tokenize_single_chars(char current) {
     Token l_token;
     if (current == '(') {
         l_token.type = OPEN_BRACKET;
@@ -75,6 +75,11 @@ Token tokenize_brackets(char current) {
     if (current == ')') {
         l_token.type = CLOSE_BRACKET;
         l_token.value = ")";
+    }
+
+    if (current == '+') {
+        l_token.type = ADDITION;
+        l_token.value = "+";
     }
 
     return l_token;
@@ -115,8 +120,10 @@ Token* lexer(FILE* p_file, int* length) {
             curr_token = check_string(current, p_file);
         } else if (isdigit(current)) {
             curr_token = check_int_lit(current, p_file);
-        } else if (current == ')' || current == '(') {
-            curr_token = tokenize_brackets(current);
+        } else if (current == ')' ||
+            current == '(' ||
+            current == '+') {
+            curr_token = tokenize_single_chars(current);
         } else if (current == ';') {
             curr_token = tokenize_semicolon(current);
         } else if (current == '=') {
@@ -167,6 +174,9 @@ void print_token(Token token) {
         break;
     case (IDENTIFIER):
         printf("Token type: IDENTIFIER\n");
+        break;
+    case (ADDITION):
+        printf("Token type: ADDITION\n");
         break;
     }
 }
